@@ -18,7 +18,7 @@
         <div class="bottom" >
             <MaterialApp theme={theme}>
                 <div class="app">
-                    <Button depressed rounded active size="x-large"> ⟶ </Button>
+                    <Button depressed rounded active size="x-large" class="black white-text"> ⟶ </Button>
                 </div>
             </MaterialApp>
         </div>
@@ -27,6 +27,21 @@
 </div>
 
 <style>
+    @font-face {
+        font-family: Catallina;
+        src: url(./resources/fonts/Catallina/Catallina.otf);
+    }
+
+    @font-face {
+        font-family: Grancino;
+        src: url(./resources/fonts/Grancino-Font/grancino.otf);
+    }
+
+    h1 {
+        font-family: Grancino;
+        font-size: 200px;
+    }
+
     .app {
         background-color: #FFBE00;
         margin-bottom: 17.5%;

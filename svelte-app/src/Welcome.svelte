@@ -1,24 +1,45 @@
 <script>
     import { MaterialApp, Button } from 'svelte-materialify';
     export let theme;
+
+    
 </script>
 
-<body>
-    <div class="top">
-    </div>
-    <div class="middle">
-        <h1>
-            Get Started
-        </h1>
-    </div>
-    <div class="bottom" >
-        <MaterialApp theme={theme}>
-            <Button depressed rounded active size="x-large"> ⟶ </Button>
-        </MaterialApp>
-    </div>
-</body>
+<div class="outside">
+    <body>
+        <div class="top">
+        </div>
+        <div class="middle">
+            <h1>
+                Get Started
+            </h1>
+        </div>
+        
+        <div class="bottom" >
+            <MaterialApp theme={theme}>
+                <div class="app">
+                    <Button depressed rounded active size="x-large"> ⟶ </Button>
+                </div>
+            </MaterialApp>
+        </div>
+        
+    </body>
+</div>
 
 <style>
+    .app {
+        background-color: #FFBE00;
+        margin-bottom: 17.5%;
+    }
+
+    .outside {
+        position:fixed;
+		top:0;
+		left: 0;
+        height: 100%;
+		width: 100%;
+    }
+
     body {
         height: 100%;
         width: 100%;
@@ -30,6 +51,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+
     }
 
 	.middle {

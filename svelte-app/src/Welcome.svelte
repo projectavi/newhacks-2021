@@ -29,17 +29,17 @@
 <style>
     @font-face {
         font-family: Catallina;
-        src: url(./resources/fonts/Catallina/Catallina.otf);
+        src: url(/resources/fonts/Catallina/Catallina.otf);
     }
 
     @font-face {
         font-family: Grancino;
-        src: url(./resources/fonts/Grancino-Font/grancino.otf);
+        src: url(/resources/fonts/Grancino-Font/grancino.otf);
     }
 
     h1 {
         font-family: Grancino;
-        font-size: 200px;
+        font-size: 185px;
     }
 
     .app {

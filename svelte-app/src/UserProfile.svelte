@@ -6,8 +6,9 @@
     import { createEventDispatcher } from 'svelte';
     import { onMount } from 'svelte';
     import User from "./User.svelte"
+    import { userAcc } from "./store";
 
-    export let uid;
+    export let uid = $userAcc.uid;
 
     const query = firestore.collection('profiles').where('uid', '==', uid).orderBy('saved');
 

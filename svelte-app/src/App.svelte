@@ -9,6 +9,7 @@
 	import UserProfile from './UserProfile.svelte';
   	import Dashboard from './Dashboard.svelte';
 	import Tasks from './Tasks.svelte';
+	import { userAcc } from "./store";
 
 	let theme = 'light';
 
@@ -22,7 +23,7 @@
 		<Route path="/login">
 			<Login />
 		</Route>
-		<Route path="/account">
+		<Route path="/settings">
 			<UserProfile />
 		</Route>
 		<Route path="/dashboard">

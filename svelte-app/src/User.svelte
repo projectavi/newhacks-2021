@@ -14,7 +14,7 @@
 
 		dispatch('update', { id, new_data: data });
 	};
-
+    
     export let id; // document ID
     export let data;
 

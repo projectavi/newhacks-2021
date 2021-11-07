@@ -1,5 +1,6 @@
 <script>
     import UserProfile from './UserProfile.svelte';
+	import Dashboard from './Dashboard.svelte';
 
     import { auth, google_provider } from './firebase';
     import { authState } from 'rxfire/auth';
@@ -23,15 +24,30 @@
 		console.log(user)
 		$userAcc = user
 	}
+
+	function binduser() {
+		$userAcc = user
+		console.log(user)
+	}
 </script>
 
+<Router>
+    <Route path="/settings">
+        <UserProfile uid={user.uid}/>
+    </Route>
+	<Route path="/dashboard">
+        <Dashboard uid={user.uid}/>
+    </Route>
+</Router>
 
 <section>
 
 	<div>
 		{#if user}
 			<Link to="/dashboard">
-				Dashboard
+				<button on:click={binduser}>
+					Dashboard
+				</button>
 			</Link>
 			<button on:click={signout}>
 				Sign out

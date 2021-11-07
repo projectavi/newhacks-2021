@@ -1,10 +1,37 @@
 <script>
-    import { all_task_store } from "./store.js";
+    import { all_task_store, task_store, countid, userAcc } from "./store.js";
     import { str_to_date, calculate_timeRemaining, choose_task } from "./chooseTask";
     import { onMount } from 'svelte';
     import Typewriter from 'svelte-typewriter';
+    import User from './User.svelte';
+    import { firestore } from './firebase';
+    import { collectionData } from 'rxfire/firestore';
+    import { startWith } from 'rxjs/operators';
+
+    let uid = $userAcc.uid;
+
+    let doc_id;
+
+    const query = firestore.collection('profiles').where('uid', '==', uid).orderBy('saved');
+
+    const profiles = collectionData(query, 'id').pipe(startWith([]));
+
+    let FLAG_newUser = true;
+
+    let FLAG_subtask = false;
+
+    let data = {
+        name: $userAcc.displayName,
+        email: $userAcc.email,
+        phone: "",
+        tasks: $all_task_store,
+        tasks_heirarchy: $task_store,
+    }
     
-    let tasks_store = $all_task_store;
+    let task_id = $countid;
+    
+    let tasks = $all_task_store;
+    let tasks_heirarchy = $task_store;
 
     let visible1 = true;
     let visible2 = true;
@@ -12,7 +39,7 @@
     let task_name = 'my_task for now';
 
     onMount(() => {
-		task_name = choose_task(tasks_store);
+		task_name = choose_task(tasks);
         console.log(task_name);
 	});
 
@@ -21,8 +48,88 @@
     let quote1 = quotes[0];
     let quote2 = quotes[1];
 
+    function fillInfo(event) {
+      const { id, new_data } = event.detail;
+      doc_id = id;
+      Object.keys(new_data).forEach(function(key) {
+          data[key] = new_data[key]
+      })
+      FLAG_newUser = false;
+      if (Object.keys(new_data).length != Object.keys(data).length) {
+          firestore.collection('profiles').doc(id).delete();
+          firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+      }
+      tasks = data.tasks;
+      tasks_heirarchy = data.tasks_heirarchy;
+      task_id = data.tasks[data.tasks.length-1].id;
+      $countid = task_id;
+      $all_task_store = tasks;
+    }
+
     function endDialog() {
-        console.log(null);
+        deleteTask(task_name, tasks);
+        if (tasks.length == 0) {
+            task_name = {name : "Congratulations! You've Finished your Todo List!", id: -1};
+        }
+        else {
+            task_name = choose_task(tasks);
+        }
+        console.log(task_name);
+
+    }
+
+    function updateProfile(id) {
+        firestore.collection('profiles').doc(id).delete();
+        console.log(data);
+        firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+    }
+
+    function deleteTask(task_obj, tasks) {
+        delete_heirarchy(tasks_heirarchy, task_obj);
+
+        console.log(tasks_heirarchy);
+
+        for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id == task_obj.id || tasks[i].parentTask == task_obj.id) {
+            tasks.splice(i, 1);
+        }
+        }
+
+        $all_task_store = tasks;
+        $task_store = tasks_heirarchy;
+        data.tasks = tasks;
+        data.tasks_heirarchy = tasks_heirarchy;
+        updateProfile(doc_id);
+    }
+
+    function delete_heirarchy(task_list, task_obj) {
+        console.log(task_list);
+        const index = task_list.indexOf(task_obj);
+        for (var i = 0; i < task_list.length; i++) {
+            if (task_list[i].id == task_obj.id) {
+                task_list.splice(i, 1);
+                console.log(task_list);
+                return 0;
+            }
+            else {
+                for (var j = 0; j < task_list.length; j++) {
+                    console.log(task_list)
+                    // console.log(i)
+                    // console.log(task_list[i])
+                    // console.log(taskid)
+                    if (task_list[j].child_tasks[0] != "") {
+                        if (delete_heirarchy(task_list[j].child_tasks, task_obj) == 0) {
+                            return 0;
+                        }
+                        else 
+                        {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 </script>
 
@@ -62,6 +169,9 @@
         {/if}
     </div>
 </body>
+{#each $profiles as profile}
+    <User {...profile} on:update={updateProfile} on:u_data={fillInfo} type="dialogit"/>
+{/each}
 
 <style>
     body {

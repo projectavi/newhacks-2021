@@ -9,6 +9,7 @@
 	import UserProfile from './UserProfile.svelte';
   	import Dashboard from './Dashboard.svelte';
 	import Tasks from './Tasks.svelte';
+	import { userAcc } from "./store";
 
 	let theme = 'light';
 

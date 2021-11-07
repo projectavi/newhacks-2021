@@ -2,8 +2,16 @@
     import { MaterialApp, Card, CardText, CardActions, Button } from 'svelte-materialify';
     import { Router, Route, Link } from "svelte-navigator";
     let theme = 'light';
-</script>
+    import { userAcc } from "./store";
 
+    export let uid;
+
+    function test() {
+        console.log('test');
+        console.log($userAcc);
+        console.log(uid);
+    }
+</script>
 
 <body>
     <div id='top' style="height:100px;"></div>
@@ -42,20 +50,22 @@
         </Link>
     </div>
     <div class="middle">
-        <button>
-            <MaterialApp>
-                <div class="d-flex flex-row justify-center mt-4 mb-4 grey darken-4">
-                    <Card outlined raised style="width:300px;" class="grey darken-4">
-                        <div class="pl-4 pr-4 pt-3 pb-14 text-center">
-                        <span class="text-overline"></span>
-                        <br />
-                        <span class="text-h4 text-center mb-2 white-text" style="max-width: 300px;">Settings</span>
-                        <br />
-                        </div>
-                    </Card>
-                </div>
-            </MaterialApp>
-        </button>
+        <Link to="/account">
+            <button on:click={test}>
+                <MaterialApp>
+                    <div class="d-flex flex-row justify-center mt-4 mb-4 grey darken-4">
+                        <Card outlined raised style="width:300px;" class="grey darken-4">
+                            <div class="pl-4 pr-4 pt-3 pb-14 text-center">
+                            <span class="text-overline"></span>
+                            <br />
+                            <span class="text-h4 text-center mb-2 white-text" style="max-width: 300px;">Profile</span>
+                            <br />
+                            </div>
+                        </Card>
+                    </div>
+                </MaterialApp>
+            </button>
+        </Link>
     </div>
     <div id='bottom' style="height:100px;"></div>
 </body>

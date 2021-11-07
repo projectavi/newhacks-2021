@@ -23,7 +23,7 @@
 		<Route path="/login">
 			<Login />
 		</Route>
-		<Route path="/settings">
+		<Route path="/account">
 			<UserProfile />
 		</Route>
 		<Route path="/dashboard">

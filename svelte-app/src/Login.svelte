@@ -31,15 +31,6 @@
 	}
 </script>
 
-<Router>
-    <Route path="/settings">
-        <UserProfile uid={user.uid}/>
-    </Route>
-	<Route path="/dashboard">
-        <Dashboard uid={user.uid}/>
-    </Route>
-</Router>
-
 <section>
 
 	<div>

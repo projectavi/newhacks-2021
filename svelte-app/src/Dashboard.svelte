@@ -50,7 +50,7 @@
         </Link>
     </div>
     <div class="middle">
-        <Link to="/settings">
+        <Link to="/account">
             <button on:click={test}>
                 <MaterialApp>
                     <div class="d-flex flex-row justify-center mt-4 mb-4 grey darken-4">
@@ -58,7 +58,7 @@
                             <div class="pl-4 pr-4 pt-3 pb-14 text-center">
                             <span class="text-overline"></span>
                             <br />
-                            <span class="text-h4 text-center mb-2 white-text" style="max-width: 300px;">Settings</span>
+                            <span class="text-h4 text-center mb-2 white-text" style="max-width: 300px;">Profile</span>
                             <br />
                             </div>
                         </Card>

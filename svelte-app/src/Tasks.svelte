@@ -64,10 +64,10 @@
 
   function find_parent(task_list, taskid, new_task) {
     for (var i = 0; i < task_list.length; i++) {
-      console.log(task_list)
-      console.log(i)
-      console.log(task_list[i])
-      console.log(taskid)
+      // console.log(task_list)
+      // console.log(i)
+      // console.log(task_list[i])
+      // console.log(taskid)
       if (task_list[i].id == taskid) {
         if (task_list[i].child_tasks[0] == "") {
           console.log("run");
@@ -174,7 +174,48 @@
     isAddTask = true;
   }
 
+  function deleteTask(event) {
+    const { task_obj } = event.detail;
+    delete_heirarchy(tasks_heirarchy, task_obj);
 
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i].id == task_obj.id || tasks[i].parentTask == task_obj.id) {
+        tasks.splice(i, 1);
+      }
+    }
+
+    $all_task_store = tasks;
+    $task_store = tasks_heirarchy;
+    data.tasks = tasks;
+    data.tasks_heirarchy = tasks_heirarchy;
+    updateProfile(doc_id);
+  }
+
+  function delete_heirarchy(task_list, task_obj) {
+    console.log(typeof task_list);
+    let taskid = task_obj.id;
+    const index = task_list.indexOf(task_obj);
+    if (index > -1) {
+      task_list.splice(index, 1);
+      return 0;
+    }
+    else {
+      for (var i = 0; i < task_list.length; i++) {
+        // console.log(task_list)
+        // console.log(i)
+        // console.log(task_list[i])
+        // console.log(taskid)
+        if (task_list[i].child_tasks[0] != "") {
+            if (delete_heirarchy(task_list[i].child_tasks, task_obj) == 0) {
+              return 0;
+            }
+            else {
+              continue;
+            }
+        }
+      }
+    }
+  }
 
 </script>
 
@@ -190,7 +231,7 @@
             {#if task.child_tasks[0] == ""}
               <ListItem>
                 <div class="listitem">
-                  {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                  {task.name} <SubtaskButton task={task} on:clicked={addSubTask} on:delete={deleteTask}/>
                 </div>
                 <div class="listitem">
                   {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
@@ -200,7 +241,7 @@
               <ListGroup bind:active offset={26}>
                 <span slot="activator"> 
                     <div class="listitem">
-                        {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                        {task.name} <SubtaskButton task={task} on:clicked={addSubTask} on:delete={deleteTask}/>
                     </div>  
                     <div class="listitem">
                       {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
@@ -208,7 +249,7 @@
                 </span>
                 {#each task.child_tasks as child}
                   {#if typeof child != undefined}
-                    <TaskItem task={child} offset={26} on:clicked={addSubTask}/>
+                    <TaskItem task={child} offset={26} on:clicked={addSubTask} on:delete={deleteTask}/>
                   {/if}
                 {/each}
               </ListGroup>

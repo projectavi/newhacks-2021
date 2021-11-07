@@ -9,6 +9,7 @@
   import { onMount } from 'svelte';
   import User from "./User.svelte"
   import SubtaskButton from "./SubtaskButton.svelte"
+  import TaskItem from "./TaskItem.svelte"
 
   export let uid = $userAcc.uid;
 
@@ -44,7 +45,7 @@
   let timeToComplete = null;
   let parentTask = null;
   let timeRemaining = null;
-  let child_tasks = [];
+  let child_tasks = [""];
 
   function clear_fields() {
     task = null;
@@ -54,7 +55,7 @@
     timeToComplete = null;
     parentTask = null;
     timeRemaining = null;
-    child_tasks = [];
+    child_tasks = [""];
   }
 
   function addTask() {
@@ -64,7 +65,11 @@
   function find_parent(task_list, task_id, newTask) {
     task_list.forEach(task => {
       if (task.id == task_id) {
-        task.child_tasks.push(newTask);
+        if (task.child_tasks[0] == "") {
+          task.child_tasks = [newTask];
+        } else {
+          task.child_tasks.push(newTask);
+        }
       }
       else {
         find_parent(task.child_tasks, task_id, newTask);
@@ -74,10 +79,14 @@
 
   function submittedTask() {
     task_id = task_id + 1;
+    console.log(task_id);
     let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, parentTask: parentTask, timeRemaining: timeRemaining, child_tasks: child_tasks};
     if (FLAG_subtask) {
       for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id == parentTask) {
+          if (tasks[i].child_tasks[0] == "") {
+            tasks[i].child_tasks = [];
+          }
           tasks[i].child_tasks.push(task_id);
         }
       }
@@ -119,6 +128,7 @@
           firestore.collection('profiles').add({ uid, data, saved: Date.now() });
       }
       tasks = data.tasks;
+      tasks_heirarchy = data.tasks_heirarchy;
       $all_task_store = tasks;
   }
 
@@ -135,6 +145,8 @@
     isAddTask = true;
   }
 
+
+
 </script>
 
 <body>
@@ -142,22 +154,32 @@
     <div id='middle' class="middle">
       {#if !isAddTask}
       <MaterialApp>
-        <div class="d-flex justify-center">
-          <List class="elevation-2" style="width:300px">
-          {#each tasks as task}
-            <ListItem>
-              <div class="listitem">
-                {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
-              </div>
-            </ListItem>
-            <!-- <ListGroup bind:active offset={72}>
-              <span slot="activator"> Dialog </span>
-              <ListItem>Coding</ListItem>
-              <ListItem>Takes</ListItem>
-              <ListItem>Priority.</ListItem>
-              <ListItem>Sleep.</ListItem>
-            </ListGroup> -->
+        <div class="d-flex justify-center boxx">
+          <List class="elevation-2" style="width:100%">
+          <div class="boxx">
+          {#each tasks_heirarchy as task}
+            {#if task.child_tasks[0] == ""}
+              <ListItem>
+                <div class="listitem">
+                  {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                </div>
+              </ListItem>
+            {:else}
+              <ListGroup bind:active offset={26}>
+                <span slot="activator"> 
+                    <div class="listitem">
+                        {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                    </div>    
+                </span>
+                {#each task.child_tasks as child}
+                  {#if typeof child != undefined}
+                    <TaskItem task={child} offset={26} on:clicked={addSubTask}/>
+                  {/if}
+                {/each}
+              </ListGroup>
+            {/if}
           {/each}
+          </div>
           </List>
         </div>
       </MaterialApp>
@@ -200,6 +222,10 @@
 </body>
 
 <style>
+    .d-flex {
+      width: 60%;
+    }
+
     .listitem {
       display: flex;
       justify-content: space-between;
@@ -219,7 +245,7 @@
     }
 
     .sexy {
-      height: 100%;
+        height: 100%;
         width: 100%;
         display: grid;
         background-color: #ffaa00;
@@ -230,7 +256,12 @@
         background-repeat: no-repeat;
     }
 
+    .boxx {
+      width: 100%;
+    }
+
     .middle {
+        width: 50%;
         margin: auto;
         background-color: transparent;
     }

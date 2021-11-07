@@ -1,13 +1,60 @@
 <script>
+    import { fade } from 'svelte/transition';
+    import Typewriter from 'svelte-typewriter'
+    
+    let visible1 = false;
+    let visible2 = false;
+    
     let task_name = 'my_task for now';
+
+    const quotes = ["We cannot solve problems with the kind of thinking we employed when we came up with them.", "Learn as if you will live forever, live like you will die tomorrow.", "It is better to fail in originality than to succeed in imitation.", "Success usually comes to those who are too busy looking for it."];
+
+    let quote1 = quotes[0];
+    let quote2 = quotes[1];
+
+    function doSomething() {
+        visible1 = !visible1
+        visible2 = !visible2
+    }
 </script>
 
 <body>
-    <div id='top'></div>
-    <div id='middle' class="middle">
-        <blockquote class="dialog_task_name">{task_name}</blockquote>
+    <div id='top' class="middle">
+        {#if visible1}
+        <Typewriter loopRandom interval={100}>
+            <blockquote class="quote">We cannot solve problems with the kind of thinking we employed when we came up with them.</blockquote>
+            <blockquote class="quote">Learn as if you will live forever, live like you will die tomorrow.</blockquote>
+            <blockquote class="quote">It is better to fail in originality than to succeed in imitation.</blockquote>
+            <blockquote class="quote">Success usually comes to those who are too busy looking for it.</blockquote>
+            <blockquote class="quote">You didn't come this far only to give up.</blockquote>
+            <blockquote class="quote">A little progress each day adds up to big results.</blockquote>
+            <blockquote class="quote">Push yourself, because no one else is going to do it for you.</blockquote>
+            <blockquote class="quote">The future depends on what you do today.</blockquote>
+        </Typewriter>
+        <!---<blockquote class="dialog_task_name" transition:fade>{quote1}</blockquote>-->
+        {/if}
     </div>
-    <div id='bottom'></div>
+    <div id='middle' class="middle">
+        <button on:click={doSomething}>
+            <blockquote class="dialog_task_name">{task_name}</blockquote>
+        </button>
+        
+    </div>
+    <div id='bottom' class="middle">
+        {#if visible2}
+        <Typewriter loopRandom interval={100}>
+            <blockquote class="quote">We cannot solve problems with the kind of thinking we employed when we came up with them.</blockquote>
+            <blockquote class="quote">Learn as if you will live forever, live like you will die tomorrow.</blockquote>
+            <blockquote class="quote">It is better to fail in originality than to succeed in imitation.</blockquote>
+            <blockquote class="quote">Success usually comes to those who are too busy looking for it.</blockquote>
+            <blockquote class="quote">You didn't come this far only to give up.</blockquote>
+            <blockquote class="quote">A little progress each day adds up to big results.</blockquote>
+            <blockquote class="quote">Push yourself, because no one else is going to do it for you.</blockquote>
+            <blockquote class="quote">The future depends on what you do today.</blockquote>
+        </Typewriter>
+        <!---<blockquote class="dialog_task_name" transition:fade>{quote2}</blockquote>--->
+        {/if}
+    </div>
 </body>
 
 <style>
@@ -30,5 +77,9 @@
 
     .dialog_task_name {
         font-size: 30px;
+    }
+
+    .quote {
+        font-size: 40px;
     }
 </style>

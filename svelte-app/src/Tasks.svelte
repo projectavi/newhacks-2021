@@ -1,6 +1,6 @@
 <script>
   import { countid } from "./store.js"
-  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button } from 'svelte-materialify';
+  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button, Textarea } from 'svelte-materialify';
   
   let task_id = $countid;
 
@@ -22,17 +22,27 @@
 
   let isAddTask = false;
   let active = false;
-  let testVariable = 'rudy';
+ 
+  let task = null;
+  let description = null;
+  let priority = null;
+  let dueDate = null;
+  let timeToComplete = null;
+  let subtasks = null;
+  let parentTask = null;
 
   function addTask() {
     task_id = task_id + 1;
     $countid = task_id;
     console.log(task_id);
-    isAddTask = !isAddTask;
+    isAddTask = true;
   }
 
-  function printTestVariable() {
-    console.log(testVariable);
+  function submittedTask() {
+    let newTask = new TaskObject(task, description, priority, dueDate, timeToComplete, subtasks, parentTask);
+    tasks.push(newTask);
+    console.log(newTask);
+    isAddTask = false;
   }
 </script>
 
@@ -58,14 +68,24 @@
       </MaterialApp>
       {:else}
       <MaterialApp>
-        <Row>
-          <Col>
-            <TextField dense rounded filled>Edit to Change VarName</TextField>
-            <br />
-            <Button depressed on:click={printTestVariable}>Click me PUta</Button>
-          </Col>
-        </Row>
-        </MaterialApp>
+        <div class="sexy">
+          <Row>
+            <Col>
+              <TextField dense rounded filled bind:value={task}>Task Name</TextField>
+              <br />
+              <TextField dense rounded filled bind:value={priority}>Priority</TextField>
+            </Col>
+            <Col>
+              <TextField dense rounded filled bind:value={dueDate}>Due Date</TextField>
+              <br />
+              <TextField dense rounded filled bind:value={timeToComplete}>Time to Complete</TextField>
+            </Col>
+          </Row>
+          <TextField dense rounded filled bind:value={parentTask}>Parent Name</TextField>
+          <Textarea noResize value="Write in me, hoe.">Description</Textarea>
+          <Button depressed on:click={submittedTask}>Submit</Button>
+        </div>
+      </MaterialApp>
       {/if}
     </div>
     <div id='bottom' class="middle">

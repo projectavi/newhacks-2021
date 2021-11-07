@@ -20,6 +20,7 @@
         name: $userAcc.displayName,
         email: $userAcc.email,
         phone: "",
+        tasks: [],
     }
 
     function updateProfile(event) {

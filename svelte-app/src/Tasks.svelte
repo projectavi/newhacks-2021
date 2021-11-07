@@ -1,8 +1,33 @@
 <script>
-  import { countid } from "./store.js"
+  import { countid, task_store, userAcc } from "./store.js"
   import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button, Textarea } from 'svelte-materialify';
+
+  import { firestore } from './firebase';
+  import { collectionData } from 'rxfire/firestore';
+  import { startWith } from 'rxjs/operators';
+  import { createEventDispatcher } from 'svelte';
+  import { onMount } from 'svelte';
+  import User from "./User.svelte"
+
+  export let uid = $userAcc.uid;
+
+  const query = firestore.collection('profiles').where('uid', '==', uid).orderBy('saved');
+
+  const profiles = collectionData(query, 'id').pipe(startWith([]));
+
+  let FLAG_newUser = true;
+
+  let data = {
+      name: $userAcc.displayName,
+      email: $userAcc.email,
+      phone: "",
+      tasks: [],
+  }
   
   let task_id = $countid;
+  let tasks = $task_store;
+
+  let doc_id;
 
   class TaskObject {
     constructor(name, description, priority, dueDate, timeToComplete, subtasks, parentTask, timeRemaining) {
@@ -18,8 +43,6 @@
     }
   }
 
-  const tasks = [];
-
   let isAddTask = false;
   let active = false;
  
@@ -33,18 +56,49 @@
   let timeRemaining = null;
 
   function addTask() {
-    task_id = task_id + 1;
-    $countid = task_id;
-    console.log(task_id);
     isAddTask = true;
   }
 
   function submittedTask() {
-    let newTask = new TaskObject(task, description, priority, dueDate, timeToComplete, subtasks, parentTask, timeRemaining);
+    task_id = task_id + 1;
+    $countid = task_id;
+    console.log(task_id);
+    let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, subtasks: subtasks, parentTask: parentTask, timeRemaining: timeRemaining};
     tasks.push(newTask);
+    $task_store = tasks;
     console.log(newTask);
     isAddTask = false;
+    data.tasks = tasks;
+    updateProfile(doc_id);
   }
+
+  function updateProfile(id) {
+      firestore.collection('profiles').doc(id).delete();
+      console.log(data);
+      firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+      alert("Your profile has been updated.")
+  }
+
+  function fillInfo(event) {
+      const { id, new_data } = event.detail;
+      doc_id = id;
+      Object.keys(new_data).forEach(function(key) {
+          data[key] = new_data[key]
+      })
+      FLAG_newUser = false;
+      if (Object.keys(new_data).length != Object.keys(data).length) {
+          firestore.collection('profiles').doc(id).delete();
+          firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+      }
+      tasks = data.tasks;
+      $task_store = tasks;
+  }
+
+  function addNewProfile() {
+      firestore.collection('profiles').add({ uid, data, saved: Date.now() })
+      alert("Your profile has been added.")
+  }
+
 </script>
 
 <body>
@@ -83,7 +137,7 @@
             </Col>
           </Row>
           <TextField dense rounded filled bind:value={parentTask}>Parent Name</TextField>
-          <Textarea noResize value="Write in me, hoe.">Description</Textarea>
+          <Textarea noResize placeholder="Write in me, hoe.">Description</Textarea>
           <Button depressed on:click={submittedTask}>Submit</Button>
         </div>
       </MaterialApp>
@@ -101,6 +155,9 @@
         </div>
       </MaterialApp>
     </div>
+    {#each $profiles as profile}
+        <User {...profile} on:update={updateProfile} on:u_data={fillInfo} type="tasks"/>
+    {/each}
 </body>
 
 <style>

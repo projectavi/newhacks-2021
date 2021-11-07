@@ -1,5 +1,5 @@
 <script>
-  import { countid, task_store, userAcc } from "./store.js"
+  import { countid, all_task_store, userAcc, task_store } from "./store.js"
   import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button, Textarea } from 'svelte-materialify';
 
   import { firestore } from './firebase';
@@ -8,6 +8,7 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
   import User from "./User.svelte"
+  import SubtaskButton from "./SubtaskButton.svelte"
 
   export let uid = $userAcc.uid;
 
@@ -17,31 +18,21 @@
 
   let FLAG_newUser = true;
 
+  let FLAG_subtask = false;
+
   let data = {
       name: $userAcc.displayName,
       email: $userAcc.email,
       phone: "",
       tasks: [],
+      tasks_heirarchy: [],
   }
   
   let task_id = $countid;
   let tasks = [];
+  let tasks_heirarchy = [];
 
   let doc_id;
-
-  class TaskObject {
-    constructor(name, description, priority, dueDate, timeToComplete, subtasks, parentTask, timeRemaining) {
-      this.id = task_id;
-      this.name = name;
-      this.description = description;
-      this.priority = priority;
-      this.dueDate = dueDate;
-      this.timeToComplete = timeToComplete;
-      this.subtasks = subtasks;
-      this.parentTask = parentTask;
-      this.timeRemaining = timeRemaining;
-    }
-  }
 
   let isAddTask = false;
   let active = false;
@@ -51,9 +42,9 @@
   let priority = null;
   let dueDate = null;
   let timeToComplete = null;
-  let subtasks = null;
   let parentTask = null;
   let timeRemaining = null;
+  let child_tasks = [];
 
   function clear_fields() {
     task = null;
@@ -61,26 +52,51 @@
     priority = null;
     dueDate = null;
     timeToComplete = null;
-    subtasks = null;
     parentTask = null;
     timeRemaining = null;
+    child_tasks = [];
   }
 
   function addTask() {
     isAddTask = true;
   }
 
+  function find_parent(task_list, task_id, newTask) {
+    task_list.forEach(task => {
+      if (task.id == task_id) {
+        task.child_tasks.push(newTask);
+      }
+      else {
+        find_parent(task.child_tasks, task_id, newTask);
+      }
+    });
+  }
+
   function submittedTask() {
     task_id = task_id + 1;
+    let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, parentTask: parentTask, timeRemaining: timeRemaining, child_tasks: child_tasks};
+    if (FLAG_subtask) {
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id == parentTask) {
+          tasks[i].child_tasks.push(task_id);
+        }
+      }
+      find_parent(tasks_heirarchy, parentTask, newTask);
+      FLAG_subtask = false;
+    }
+    else {
+      tasks_heirarchy.push(newTask);
+    }
     $countid = task_id;
     console.log(task_id);
-    let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, subtasks: subtasks, parentTask: parentTask, timeRemaining: timeRemaining};
     clear_fields();
     tasks.push(newTask);
-    $task_store = tasks;
+    $all_task_store = tasks;
+    $task_store = tasks_heirarchy;
     console.log(newTask);
     isAddTask = false;
     data.tasks = tasks;
+    data.tasks_heirarchy = tasks_heirarchy;
     updateProfile(doc_id);
   }
 
@@ -103,13 +119,20 @@
           firestore.collection('profiles').add({ uid, data, saved: Date.now() });
       }
       tasks = data.tasks;
-      $task_store = tasks;
-      console.log(tasks)
+      $all_task_store = tasks;
   }
 
   function addNewProfile() {
       firestore.collection('profiles').add({ uid, data, saved: Date.now() })
       alert("Your profile has been added.")
+  }
+
+  function addSubTask(event) {
+    const { parent_task_obj } = event.detail;
+    console.log(parent_task_obj);
+    FLAG_subtask = true;
+    parentTask = parent_task_obj.id;
+    isAddTask = true;
   }
 
 </script>
@@ -123,7 +146,9 @@
           <List class="elevation-2" style="width:300px">
           {#each tasks as task}
             <ListItem>
-              {task.name}
+              <div class="listitem">
+                {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+              </div>
             </ListItem>
             <!-- <ListGroup bind:active offset={72}>
               <span slot="activator"> Dialog </span>
@@ -151,7 +176,6 @@
               <TextField dense rounded filled bind:value={timeToComplete}>Time to Complete</TextField>
             </Col>
           </Row>
-          <TextField dense rounded filled bind:value={parentTask}>Parent Name</TextField>
           <Textarea noResize placeholder="Write in me, hoe." bind:value={description}>Description</Textarea>
           <Button depressed on:click={submittedTask}>Submit</Button>
         </div>
@@ -176,6 +200,12 @@
 </body>
 
 <style>
+    .listitem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     body {
         height: 100%;
         width: 100%;

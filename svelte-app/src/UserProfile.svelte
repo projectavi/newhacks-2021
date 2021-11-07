@@ -21,6 +21,7 @@
         email: $userAcc.email,
         phone: "",
         tasks: [],
+        tasks_heirarchy: [],
     }
 
     function updateProfile(event) {

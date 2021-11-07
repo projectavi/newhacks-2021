@@ -1,16 +1,45 @@
 <script>
-  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem } from 'svelte-materialify';
+  import { countid } from "./store.js"
+  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button } from 'svelte-materialify';
+  
+  let task_id = $countid;
 
+  class TaskObject {
+    constructor(name, description, priority, dueDate, timeToComplete, subtasks, parentTask) {
+      this.id = task_id;
+      this.name = name;
+      this.description = description;
+      this.priority = priority;
+      this.dueDate = dueDate;
+      this.timeToComplete = timeToComplete;
+      this.subtasks = subtasks;
+      this.parentTask = parentTask;
+
+    }
+  }
+
+  const tasks = [];
+
+  let isAddTask = false;
   let active = false;
+  let testVariable = 'rudy';
 
   function addTask() {
-    console.log("this bitch is called nw pussydestroyer420 sir.");
+    task_id = task_id + 1;
+    $countid = task_id;
+    console.log(task_id);
+    isAddTask = !isAddTask;
+  }
+
+  function printTestVariable {
+    console.log(testVariable);
   }
 </script>
 
 <body>
     <div id='top'></div>
     <div id='middle' class="middle">
+      {#if !isAddTask}
       <MaterialApp>
         <div class="d-flex justify-center">
           <List class="elevation-2" style="width:300px">
@@ -27,6 +56,17 @@
           </List>
         </div>
       </MaterialApp>
+      {:else}
+      <MaterialApp>
+        <Row>
+          <Col>
+            <TextField dense rounded filled>Edit to Change VarName</TextField>
+            <br />
+            <Button depressed>Click me PUta</Button>
+          </Col>
+        </Row>
+        </MaterialApp>
+      {/if}
     </div>
     <div id='bottom' class="middle">
       <MaterialApp>
@@ -38,7 +78,7 @@
             <ButtonGroupItem>Dialog It</ButtonGroupItem>
           </ButtonGroup>
         </div>
-        </MaterialApp>
+      </MaterialApp>
     </div>
 </body>
 

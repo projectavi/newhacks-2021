@@ -17,12 +17,16 @@ function str_to_date(date) {
 function calculate_timeRemaining(date) {
     return (str_to_date(date) - Date.now()) / 1000 / 60;
 }
+function hhmm_to_mm(hhmm) {
+    hhmm_split = hhmm.split(":")
+    return Number(hhmm_split[0]) * 60 + Number(hhmm_split[0])
+}
 
 function choose_task(task_list) {
     for (let i = 0; i < task_list.length; i++) {
         task_list[i].timeRemaining = calculate_timeRemaining(task_list[i].dueDate);
     }
-    console.log(typeof(task_list));
+    console.log(typeof (task_list));
     task_list.sort(function (a, b) {
         return a.timeRemaining - b.timeRemaining;
     });
@@ -47,7 +51,7 @@ function choose_task(task_list) {
         filter_highest_priority.push(filter_two_hours[i]);
     }
     filter_highest_priority.sort(function (a, b) {
-        return a.timeToComplete - b.timeToComplete;
+        return hhmm_to_mm(a.timeToComplete) - hhmm_to_mm(b.timeToComplete);
     });
     return filter_highest_priority[0];
 }

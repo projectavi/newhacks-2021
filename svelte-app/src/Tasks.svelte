@@ -25,7 +25,7 @@
   }
   
   let task_id = $countid;
-  let tasks = $task_store;
+  let tasks = [];
 
   let doc_id;
 
@@ -55,6 +55,17 @@
   let parentTask = null;
   let timeRemaining = null;
 
+  function clear_fields() {
+    task = null;
+    description = null;
+    priority = null;
+    dueDate = null;
+    timeToComplete = null;
+    subtasks = null;
+    parentTask = null;
+    timeRemaining = null;
+  }
+
   function addTask() {
     isAddTask = true;
   }
@@ -64,6 +75,7 @@
     $countid = task_id;
     console.log(task_id);
     let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, subtasks: subtasks, parentTask: parentTask, timeRemaining: timeRemaining};
+    clear_fields();
     tasks.push(newTask);
     $task_store = tasks;
     console.log(newTask);
@@ -92,6 +104,7 @@
       }
       tasks = data.tasks;
       $task_store = tasks;
+      console.log(tasks)
   }
 
   function addNewProfile() {
@@ -108,16 +121,18 @@
       <MaterialApp>
         <div class="d-flex justify-center">
           <List class="elevation-2" style="width:300px">
+          {#each tasks as task}
             <ListItem>
-              Sleep
+              {task.name}
             </ListItem>
-            <ListGroup bind:active offset={72}>
+            <!-- <ListGroup bind:active offset={72}>
               <span slot="activator"> Dialog </span>
               <ListItem>Coding</ListItem>
               <ListItem>Takes</ListItem>
               <ListItem>Priority.</ListItem>
               <ListItem>Sleep.</ListItem>
-            </ListGroup>
+            </ListGroup> -->
+          {/each}
           </List>
         </div>
       </MaterialApp>
@@ -137,7 +152,7 @@
             </Col>
           </Row>
           <TextField dense rounded filled bind:value={parentTask}>Parent Name</TextField>
-          <Textarea noResize placeholder="Write in me, hoe.">Description</Textarea>
+          <Textarea noResize placeholder="Write in me, hoe." bind:value={description}>Description</Textarea>
           <Button depressed on:click={submittedTask}>Submit</Button>
         </div>
       </MaterialApp>

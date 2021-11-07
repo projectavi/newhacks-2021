@@ -12,7 +12,7 @@
   import TaskItem from "./TaskItem.svelte"
   import { Router, Route, Link, navigate } from "svelte-navigator";
 
-  const etcRegExp = /^[0-2][0-9]\:[0-6][0-9]$/;
+  const etcRegExp = /^[0-9][0-9]\:[0-9][0-9]$/;
   const dueDateRegExp = /^[0-9]{4}\/[0-1][0-9]\/[0-3][0-9]\/[0-2][0-9]\/[0-6][0-9]$/;
   const priorityRegExp = /^[1-5]$/;
 

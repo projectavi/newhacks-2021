@@ -1,4 +1,5 @@
 <script>
+
 	import { MaterialApp, Button } from 'svelte-materialify';
 
 	import { Router, Route, Link } from "svelte-navigator";
@@ -6,6 +7,7 @@
 	import Welcome from './Welcome.svelte';
 	import Login from './Login.svelte';
 	import UserProfile from './UserProfile.svelte';
+  import Dashboard from './Dashboard.svelte';
 
 	let theme = 'light';
 
@@ -22,6 +24,9 @@
 		<Route path="/account">
 			<UserProfile />
 		</Route>
+    <Route path="/dashboard">
+      <Dashboard />
+    </Route>
 	</Router>
 
 
@@ -30,10 +35,10 @@
 
 <style>
 	main {
-		position:fixed;
+		position: fixed;
 		top:0;
 		left: 0;
-        height: 100%;
+    height: 100%;
 		width: 100%;
-    }
+   }
 </style>

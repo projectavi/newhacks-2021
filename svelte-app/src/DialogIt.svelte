@@ -6,8 +6,8 @@
     
     let tasks_store = $all_task_store;
 
-    let visible1 = false;
-    let visible2 = false;
+    let visible1 = true;
+    let visible2 = true;
     
     let task_name = 'my_task for now';
 
@@ -21,16 +21,15 @@
     let quote1 = quotes[0];
     let quote2 = quotes[1];
 
-    function doSomething() {
-        visible1 = !visible1
-        visible2 = !visible2
+    function endDialog() {
+        console.log(null);
     }
 </script>
 
 <body>
     <div id='top' class="middle">
         {#if visible1}
-        <Typewriter loopRandom interval={100}>
+        <Typewriter loopRandom interval={225}>
             <blockquote class="quote">We cannot solve problems with the kind of thinking we employed when we came up with them.</blockquote>
             <blockquote class="quote">Learn as if you will live forever, live like you will die tomorrow.</blockquote>
             <blockquote class="quote">It is better to fail in originality than to succeed in imitation.</blockquote>
@@ -43,14 +42,14 @@
         {/if}
     </div>
     <div id='middle' class="middle">
-        <button on:click={doSomething}>
-            <blockquote class="dialog_task_name">{task_name}</blockquote>
+        <button on:click={endDialog}>
+            <blockquote class="dialog_task_name">{task_name.name}</blockquote>
         </button>
         
     </div>
     <div id='bottom' class="middle">
         {#if visible2}
-        <Typewriter loopRandom interval={100}>
+        <Typewriter loopRandom interval={225}>
             <blockquote class="quote">We cannot solve problems with the kind of thinking we employed when we came up with them.</blockquote>
             <blockquote class="quote">Learn as if you will live forever, live like you will die tomorrow.</blockquote>
             <blockquote class="quote">It is better to fail in originality than to succeed in imitation.</blockquote>
@@ -88,5 +87,9 @@
 
     .quote {
         font-size: 40px;
+    }
+
+    button:focus {
+        background-color: transparent;
     }
 </style>

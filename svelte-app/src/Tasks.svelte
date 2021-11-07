@@ -62,19 +62,46 @@
     isAddTask = true;
   }
 
-  function find_parent(task_list, task_id, newTask) {
-    task_list.forEach(task => {
-      if (task.id == task_id) {
-        if (task.child_tasks[0] == "") {
-          task.child_tasks = [newTask];
+  function find_parent(task_list, taskid, new_task) {
+    for (var i = 0; i < task_list.length; i++) {
+      console.log(task_list)
+      console.log(i)
+      console.log(task_list[i])
+      console.log(taskid)
+      if (task_list[i].id == taskid) {
+        if (task_list[i].child_tasks[0] == "") {
+          console.log("run");
+          task_list[i].child_tasks = [new_task];
+          return 0;
         } else {
-          task.child_tasks.push(newTask);
+          console.log("run2");
+          task_list[i].child_tasks.push(new_task);
+          return 0;
         }
       }
       else {
-        find_parent(task.child_tasks, task_id, newTask);
+      if (task_list[i].child_tasks[0] != "") {
+          if (find_parent(task_list[i].child_tasks, taskid, new_task) == 0) {
+            return 0;
+          }
+          else {
+            continue;
+          }
       }
-    });
+      }
+    }
+    // task_list.forEach(taskc => {
+    //   if (taskc.id == taskid) {
+    //     if (taskc.child_tasks[0] == "") {
+    //       taskc.child_tasks = [new_task];
+    //     } else {
+    //       taskc.child_tasks.push(new_task);
+    //     }
+    //   }
+    //   else {
+    //     find_parent(taskc.child_tasks, taskid, new_task);
+    //   }
+    // });
   }
 
   function submittedTask() {
@@ -90,7 +117,7 @@
           tasks[i].child_tasks.push(task_id);
         }
       }
-      find_parent(tasks_heirarchy, parentTask, newTask);
+      const dum = find_parent(tasks_heirarchy, parentTask, newTask);
       FLAG_subtask = false;
     }
     else {
@@ -129,6 +156,8 @@
       }
       tasks = data.tasks;
       tasks_heirarchy = data.tasks_heirarchy;
+      task_id = data.tasks[data.tasks.length-1].id;
+      $countid = task_id;
       $all_task_store = tasks;
   }
 
@@ -163,13 +192,19 @@
                 <div class="listitem">
                   {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
                 </div>
+                <div class="listitem">
+                  {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
+                </div>
               </ListItem>
             {:else}
               <ListGroup bind:active offset={26}>
                 <span slot="activator"> 
                     <div class="listitem">
                         {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
-                    </div>    
+                    </div>  
+                    <div class="listitem">
+                      {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
+                    </div>  
                 </span>
                 {#each task.child_tasks as child}
                   {#if typeof child != undefined}

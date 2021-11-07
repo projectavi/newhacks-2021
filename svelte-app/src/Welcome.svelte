@@ -1,24 +1,28 @@
 <script>
     import { MaterialApp, Button } from 'svelte-materialify';
+    import { Router, Route, Link } from "svelte-navigator";
     export let theme;
 
     
 </script>
 
 <div class="outside">
+
     <body>
         <div class="top">
         </div>
         <div class="middle">
             <h1>
-                Get Started
+                Dialog: Get Started
             </h1>
         </div>
         
         <div class="bottom" >
             <MaterialApp theme={theme}>
                 <div class="app">
-                    <Button depressed rounded active size="x-large" class="black white-text"> ⟶ </Button>
+                    <Link to="/login">
+                        <Button depressed rounded active size="x-large" class="black white-text"> ⟶ </Button>
+                    </Link>
                 </div>
             </MaterialApp>
         </div>

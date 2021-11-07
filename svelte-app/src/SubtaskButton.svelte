@@ -16,6 +16,10 @@
 		dispatch('clicked', { parent_task_obj: task });
 	};
 
+    function deleteTask() {
+        dispatch('delete', { task_obj: task });
+    }
+
     export let task;
 
     // export let id = "clicked"; // document ID
@@ -27,9 +31,16 @@
     //     console.log("Dispatched.")
 	// });
 </script>
+<div class="buttons">
+    <Button fab size="small" on:click={update}> + </Button> <Button fab size="small" on:click={update}> Edit </Button> <Button fab size="small" on:click={deleteTask}> Del </Button>
+</div>
 
-<Button fab size="small" on:click={update}> + </Button>
+<!-- https://ibb.co/hf7fq8X
+https://ibb.co/dgKPXjr -->
 
 <style>
+    .buttons {
+        display: flexbox;
+    }
 </style>
 

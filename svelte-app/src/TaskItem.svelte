@@ -35,6 +35,11 @@
 		dispatch('clicked', { parent_task_obj });
 	};
 
+    function deleteTask(event) {
+        const { task_obj } = event.detail;
+        dispatch('delete', { task_obj });
+    }
+
 </script>
 
 <style>
@@ -52,20 +57,20 @@
     <ListGroup bind:active offset={offset+10}>
         <span slot="activator"> 
             <div class="listitem">
-                {task.name} <SubtaskButton task={task} on:clicked={sendEvent}/>
+                {task.name} <SubtaskButton task={task} on:clicked={sendEvent} on:delete={deleteTask}/>
             </div>
             <div class="listitem">
                 {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
             </div>    
         </span>
         {#each children as child}
-            <svelte:self task={child} offset={offset+10} on:clicked={sendEvent}/>
+            <svelte:self task={child} offset={offset+10} on:clicked={sendEvent} on:delete={deleteTask}/>
         {/each}
     </ListGroup>
 {:else}
     <ListItem>
         <div class="listitem">
-            {task.name} <SubtaskButton task={task} on:clicked={sendEvent}/>
+            {task.name} <SubtaskButton task={task} on:clicked={sendEvent} on:delete={deleteTask}/>
         </div>
         <div class="listitem">
             {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}

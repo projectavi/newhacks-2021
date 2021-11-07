@@ -1,32 +1,208 @@
 <script>
-  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem } from 'svelte-materialify';
+  import { countid, all_task_store, userAcc, task_store } from "./store.js"
+  import { List, ListItem, MaterialApp, ListGroup, ButtonGroup, ButtonGroupItem, TextField, Row, Col, Button, Textarea } from 'svelte-materialify';
 
+  import { firestore } from './firebase';
+  import { collectionData } from 'rxfire/firestore';
+  import { startWith } from 'rxjs/operators';
+  import { createEventDispatcher } from 'svelte';
+  import { onMount } from 'svelte';
+  import User from "./User.svelte"
+  import SubtaskButton from "./SubtaskButton.svelte"
+  import TaskItem from "./TaskItem.svelte"
+
+  export let uid = $userAcc.uid;
+
+  const query = firestore.collection('profiles').where('uid', '==', uid).orderBy('saved');
+
+  const profiles = collectionData(query, 'id').pipe(startWith([]));
+
+  let FLAG_newUser = true;
+
+  let FLAG_subtask = false;
+
+  let data = {
+      name: $userAcc.displayName,
+      email: $userAcc.email,
+      phone: "",
+      tasks: [],
+      tasks_heirarchy: [],
+  }
+  
+  let task_id = $countid;
+  let tasks = [];
+  let tasks_heirarchy = [];
+
+  let doc_id;
+
+  let isAddTask = false;
   let active = false;
+ 
+  let task = null;
+  let description = null;
+  let priority = null;
+  let dueDate = null;
+  let timeToComplete = null;
+  let parentTask = null;
+  let timeRemaining = null;
+  let child_tasks = [""];
+
+  function clear_fields() {
+    task = null;
+    description = null;
+    priority = null;
+    dueDate = null;
+    timeToComplete = null;
+    parentTask = null;
+    timeRemaining = null;
+    child_tasks = [""];
+  }
 
   function addTask() {
-    console.log("this bitch is called nw pussydestroyer420 sir.");
+    isAddTask = true;
   }
+
+  function find_parent(task_list, task_id, newTask) {
+    task_list.forEach(task => {
+      if (task.id == task_id) {
+        if (task.child_tasks[0] == "") {
+          task.child_tasks = [newTask];
+        } else {
+          task.child_tasks.push(newTask);
+        }
+      }
+      else {
+        find_parent(task.child_tasks, task_id, newTask);
+      }
+    });
+  }
+
+  function submittedTask() {
+    task_id = task_id + 1;
+    console.log(task_id);
+    let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, parentTask: parentTask, timeRemaining: timeRemaining, child_tasks: child_tasks};
+    if (FLAG_subtask) {
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id == parentTask) {
+          if (tasks[i].child_tasks[0] == "") {
+            tasks[i].child_tasks = [];
+          }
+          tasks[i].child_tasks.push(task_id);
+        }
+      }
+      find_parent(tasks_heirarchy, parentTask, newTask);
+      FLAG_subtask = false;
+    }
+    else {
+      tasks_heirarchy.push(newTask);
+    }
+    $countid = task_id;
+    console.log(task_id);
+    clear_fields();
+    tasks.push(newTask);
+    $all_task_store = tasks;
+    $task_store = tasks_heirarchy;
+    console.log(newTask);
+    isAddTask = false;
+    data.tasks = tasks;
+    data.tasks_heirarchy = tasks_heirarchy;
+    updateProfile(doc_id);
+  }
+
+  function updateProfile(id) {
+      firestore.collection('profiles').doc(id).delete();
+      console.log(data);
+      firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+      alert("Your profile has been updated.")
+  }
+
+  function fillInfo(event) {
+      const { id, new_data } = event.detail;
+      doc_id = id;
+      Object.keys(new_data).forEach(function(key) {
+          data[key] = new_data[key]
+      })
+      FLAG_newUser = false;
+      if (Object.keys(new_data).length != Object.keys(data).length) {
+          firestore.collection('profiles').doc(id).delete();
+          firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+      }
+      tasks = data.tasks;
+      tasks_heirarchy = data.tasks_heirarchy;
+      $all_task_store = tasks;
+  }
+
+  function addNewProfile() {
+      firestore.collection('profiles').add({ uid, data, saved: Date.now() })
+      alert("Your profile has been added.")
+  }
+
+  function addSubTask(event) {
+    const { parent_task_obj } = event.detail;
+    console.log(parent_task_obj);
+    FLAG_subtask = true;
+    parentTask = parent_task_obj.id;
+    isAddTask = true;
+  }
+
+
+
 </script>
 
 <body>
     <div id='top'></div>
     <div id='middle' class="middle">
+      {#if !isAddTask}
       <MaterialApp>
-        <div class="d-flex justify-center">
-          <List class="elevation-2" style="width:300px">
-            <ListItem>
-              Sleep
-            </ListItem>
-            <ListGroup bind:active offset={72}>
-              <span slot="activator"> Dialog </span>
-              <ListItem>Coding</ListItem>
-              <ListItem>Takes</ListItem>
-              <ListItem>Priority.</ListItem>
-              <ListItem>Sleep.</ListItem>
-            </ListGroup>
+        <div class="d-flex justify-center boxx">
+          <List class="elevation-2" style="width:100%">
+          <div class="boxx">
+          {#each tasks_heirarchy as task}
+            {#if task.child_tasks[0] == ""}
+              <ListItem>
+                <div class="listitem">
+                  {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                </div>
+              </ListItem>
+            {:else}
+              <ListGroup bind:active offset={26}>
+                <span slot="activator"> 
+                    <div class="listitem">
+                        {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
+                    </div>    
+                </span>
+                {#each task.child_tasks as child}
+                  {#if typeof child != undefined}
+                    <TaskItem task={child} offset={26} on:clicked={addSubTask}/>
+                  {/if}
+                {/each}
+              </ListGroup>
+            {/if}
+          {/each}
+          </div>
           </List>
         </div>
       </MaterialApp>
+      {:else}
+      <MaterialApp>
+        <div class="sexy">
+          <Row>
+            <Col>
+              <TextField dense rounded filled bind:value={task}>Task Name</TextField>
+              <br />
+              <TextField dense rounded filled bind:value={priority}>Priority</TextField>
+            </Col>
+            <Col>
+              <TextField dense rounded filled bind:value={dueDate}>Due Date</TextField>
+              <br />
+              <TextField dense rounded filled bind:value={timeToComplete}>Time to Complete</TextField>
+            </Col>
+          </Row>
+          <Textarea noResize placeholder="Write in me, hoe." bind:value={description}>Description</Textarea>
+          <Button depressed on:click={submittedTask}>Submit</Button>
+        </div>
+      </MaterialApp>
+      {/if}
     </div>
     <div id='bottom' class="middle">
       <MaterialApp>
@@ -38,11 +214,24 @@
             <ButtonGroupItem>Dialog It</ButtonGroupItem>
           </ButtonGroup>
         </div>
-        </MaterialApp>
+      </MaterialApp>
     </div>
+    {#each $profiles as profile}
+        <User {...profile} on:update={updateProfile} on:u_data={fillInfo} type="tasks"/>
+    {/each}
 </body>
 
 <style>
+    .d-flex {
+      width: 60%;
+    }
+
+    .listitem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     body {
         height: 100%;
         width: 100%;
@@ -56,7 +245,7 @@
     }
 
     .sexy {
-      height: 100%;
+        height: 100%;
         width: 100%;
         display: grid;
         background-color: #ffaa00;
@@ -67,7 +256,12 @@
         background-repeat: no-repeat;
     }
 
+    .boxx {
+      width: 100%;
+    }
+
     .middle {
+        width: 50%;
         margin: auto;
         background-color: transparent;
     }

@@ -62,7 +62,7 @@
                             <Button depressed rounded active size="x-large" class="black white-text" on:click={signout}> Sign Out </Button>    
                             <p></p>
                             <Link to="/dashboard">
-                                <Button depressed rounded active size="x-large" class="black white-text" bind:click={show}> (づ｡◕‿‿◕)づ  </Button>
+                                <Button depressed rounded active size="x-large" class="black white-text" on:click={binduser} bind:click={show}> (づ｡◕‿‿◕)づ  </Button>
                             </Link>
                         {:else}
                             <p></p>

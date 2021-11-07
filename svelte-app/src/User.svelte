@@ -5,6 +5,8 @@
     import { createEventDispatcher } from 'svelte';
     import { onMount } from 'svelte';
 
+    export let type = "profile"
+
     const dispatch = createEventDispatcher();
 
     console.log("mounted")
@@ -25,7 +27,11 @@
 	});
 </script>
 
-<button type="button" id="submit" name="submit" class="btn btn-primary" on:click={update}>Update</button>
+{#if type == "profile"}
+    <button type="button" id="submit" name="submit" class="btn btn-primary" on:click={update}>Update</button>
+{:else}
+    <p></p>
+{/if}
 
 <style>
 </style>

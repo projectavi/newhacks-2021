@@ -2,9 +2,54 @@
     import { MaterialApp, Card, CardText, CardActions, Button } from 'svelte-materialify';
     import { Router, Route, Link } from "svelte-navigator";
     let theme = 'light';
-    import { userAcc } from "./store";
+    import { userAcc, all_task_store, task_store } from "./store";
 
-    export let uid;
+    import { firestore } from './firebase';
+    import { collectionData } from 'rxfire/firestore';
+    import { startWith } from 'rxjs/operators';
+    import { createEventDispatcher } from 'svelte';
+    import { onMount } from 'svelte';
+    import User from "./User.svelte"
+
+    export let uid = $userAcc.uid;
+
+    const query = firestore.collection('profiles').where('uid', '==', uid).orderBy('saved');
+
+    const profiles = collectionData(query, 'id').pipe(startWith([]));
+
+    let FLAG_newUser = true;
+
+    let data = {
+        name: $userAcc.displayName,
+        email: $userAcc.email,
+        phone: "",
+        tasks: [],
+        tasks_heirarchy: [],
+    }
+
+    function updateProfile(event) {
+        const { id, new_data } = event.detail;
+        firestore.collection('profiles').doc(id).delete();
+        firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+        alert("Your profile has been updated.")
+    }
+
+    function fillInfo(event) {
+        const { id, new_data } = event.detail;
+        Object.keys(new_data).forEach(function(key) {
+            data[key] = new_data[key]
+        })
+        FLAG_newUser = false;
+        if (Object.keys(new_data).length != Object.keys(data).length) {
+            firestore.collection('profiles').doc(id).delete();
+            firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+        }
+
+        console.log(data);
+
+        $all_task_store = data.tasks;
+        $task_store = data.tasks_heirarchy;
+    }
 
     function test() {
         console.log('test');
@@ -14,6 +59,9 @@
 </script>
 
 <body>
+    {#each $profiles as profile}
+        <User {...profile} type="dashboard" on:update={updateProfile} on:u_data={fillInfo}/>
+    {/each}
     <div id='top' style="height:100px;"></div>
     <div class="middle">
         <Link to="/dialogit">

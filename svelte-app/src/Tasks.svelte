@@ -31,7 +31,7 @@
     isAddTask = !isAddTask;
   }
 
-  function printTestVariable {
+  function printTestVariable() {
     console.log(testVariable);
   }
 </script>
@@ -62,7 +62,7 @@
           <Col>
             <TextField dense rounded filled>Edit to Change VarName</TextField>
             <br />
-            <Button depressed>Click me PUta</Button>
+            <Button depressed on:click={printTestVariable}>Click me PUta</Button>
           </Col>
         </Row>
         </MaterialApp>

@@ -1,11 +1,20 @@
 <script>
-    import { fade } from 'svelte/transition';
-    import Typewriter from 'svelte-typewriter'
+    import { all_task_store } from "./store.js";
+    import { str_to_date, calculate_timeRemaining, choose_task } from "./chooseTask";
+    import { onMount } from 'svelte';
+    import Typewriter from 'svelte-typewriter';
     
+    let tasks_store = $all_task_store;
+
     let visible1 = false;
     let visible2 = false;
     
     let task_name = 'my_task for now';
+
+    onMount(() => {
+		task_name = choose_task(tasks_store);
+        console.log(task_name);
+	});
 
     const quotes = ["We cannot solve problems with the kind of thinking we employed when we came up with them.", "Learn as if you will live forever, live like you will die tomorrow.", "It is better to fail in originality than to succeed in imitation.", "Success usually comes to those who are too busy looking for it."];
 
@@ -31,7 +40,6 @@
             <blockquote class="quote">Push yourself, because no one else is going to do it for you.</blockquote>
             <blockquote class="quote">The future depends on what you do today.</blockquote>
         </Typewriter>
-        <!---<blockquote class="dialog_task_name" transition:fade>{quote1}</blockquote>-->
         {/if}
     </div>
     <div id='middle' class="middle">
@@ -52,7 +60,6 @@
             <blockquote class="quote">Push yourself, because no one else is going to do it for you.</blockquote>
             <blockquote class="quote">The future depends on what you do today.</blockquote>
         </Typewriter>
-        <!---<blockquote class="dialog_task_name" transition:fade>{quote2}</blockquote>--->
         {/if}
     </div>
 </body>

@@ -1,19 +1,24 @@
 <script>
-	import Dashboard from './Dashboard.svelte';
+
+	import { MaterialApp, Button } from 'svelte-materialify';
+
+	import Welcome from './Welcome.svelte';
+  import Dashboard from './Dashboard.svelte';
 
 	let theme = 'light';
+
 </script>
 
 <main>
-	<Dashboard theme={theme}/>
+	<Welcome theme={theme}/>
 </main>
 
 <style>
 	main {
 		position: fixed;
-		top: 0;
+		top:0;
 		left: 0;
-		height: 100%;
-		width:100%;
-	}
+    height: 100%;
+		width: 100%;
+   }
 </style>

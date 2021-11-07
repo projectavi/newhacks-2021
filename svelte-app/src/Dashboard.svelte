@@ -53,7 +53,6 @@
     function checkAcc() {
         if (FLAG_newUser) {
             firestore.collection('profiles').add({ uid, data, saved: Date.now() });
-            alert("Your profile has been added.");
         }
     }
 

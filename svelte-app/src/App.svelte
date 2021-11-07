@@ -10,6 +10,7 @@
   	import Dashboard from './Dashboard.svelte';
 	import Tasks from './Tasks.svelte';
 	import DialogIt from './DialogIt.svelte'
+	import Confetti from './Confetti.svelte';
 	import { userAcc } from "./store";
 
 	let theme = 'light';
@@ -35,6 +36,9 @@
 		</Route>
 		<Route path="/dialogit">
 			<DialogIt />
+		</Route>
+		<Route path="/confetti">
+			<Confetti />
 		</Route>
 	</Router>
 

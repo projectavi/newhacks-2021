@@ -5,6 +5,18 @@
     import Typewriter from 'svelte-typewriter';
     
     let tasks_store = $all_task_store;
+    let characters = ['🥳', '🎉', '✨'];
+
+    let confetti = new Array(100).fill()
+		.map((_, i) => {
+			return {
+				character: characters[i % characters.length],
+				x: Math.random() * 100,
+				y: -20 - Math.random() * 100,
+				r: 0.1 + Math.random() * 1
+			};
+		})
+		.sort((a, b) => a.r - b.r);
 
     let visible1 = true;
     let visible2 = true;
@@ -14,6 +26,22 @@
     onMount(() => {
 		task_name = choose_task(tasks_store);
         console.log(task_name);
+
+        let frame;
+
+		function loop() {
+			frame = requestAnimationFrame(loop);
+
+			confetti = confetti.map(emoji => {
+				emoji.y += 0.7 * emoji.r;
+				if (emoji.y > 120) emoji.y = -20;
+				return emoji;
+			});
+		}
+
+		loop();
+
+		return () => cancelAnimationFrame(frame);
 	});
 
     const quotes = ["We cannot solve problems with the kind of thinking we employed when we came up with them.", "Learn as if you will live forever, live like you will die tomorrow.", "It is better to fail in originality than to succeed in imitation.", "Success usually comes to those who are too busy looking for it."];
@@ -21,10 +49,14 @@
     let quote1 = quotes[0];
     let quote2 = quotes[1];
 
-    function endDialog() {
-        console.log(null);
+    function endDialog() {      
+        console.log(null);		
     }
 </script>
+
+{#each confetti as c}
+	<span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span>
+{/each}
 
 <body>
     <div id='top' class="middle">
@@ -45,7 +77,6 @@
         <button on:click={endDialog}>
             <blockquote class="dialog_task_name">{task_name.name}</blockquote>
         </button>
-        
     </div>
     <div id='bottom' class="middle">
         {#if visible2}
@@ -92,4 +123,14 @@
     button:focus {
         background-color: transparent;
     }
+
+    :global(body) {
+		overflow: hidden;
+	}
+
+	span {
+		position: absolute;
+		font-size: 5vw;
+		user-select: none;
+	}
 </style>

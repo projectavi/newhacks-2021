@@ -7,7 +7,8 @@
 	import Welcome from './Welcome.svelte';
 	import Login from './Login.svelte';
 	import UserProfile from './UserProfile.svelte';
-  import Dashboard from './Dashboard.svelte';
+  	import Dashboard from './Dashboard.svelte';
+	import Tasks from './Tasks.svelte';
 
 	let theme = 'light';
 
@@ -24,9 +25,12 @@
 		<Route path="/account">
 			<UserProfile />
 		</Route>
-    <Route path="/dashboard">
-      <Dashboard />
-    </Route>
+		<Route path="/dashboard">
+			<Dashboard />
+		</Route>
+		<Route path="/tasks">
+			<Tasks />
+		</Route>
 	</Router>
 
 

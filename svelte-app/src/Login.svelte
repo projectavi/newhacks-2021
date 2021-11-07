@@ -30,8 +30,8 @@
 
 	<div>
 		{#if user}
-			<Link to="/account">
-				Profile
+			<Link to="/dashboard">
+				Dashboard
 			</Link>
 			<button on:click={signout}>
 				Sign out

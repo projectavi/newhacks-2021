@@ -1,7 +1,9 @@
 <script>
+
 	import { MaterialApp, Button } from 'svelte-materialify';
 
 	import Welcome from './Welcome.svelte';
+  import Dashboard from './Dashboard.svelte';
 
 	let theme = 'light';
 
@@ -13,10 +15,10 @@
 
 <style>
 	main {
-		position:fixed;
+		position: fixed;
 		top:0;
 		left: 0;
-        height: 100%;
+    height: 100%;
 		width: 100%;
-    }
+   }
 </style>

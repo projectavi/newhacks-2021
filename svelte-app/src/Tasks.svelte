@@ -43,28 +43,29 @@
   let isAddTask = false;
   let active = false;
  
-  let task = null;
-  let description = null;
-  let priority = null;
-  let dueDate = null;
-  let timeToComplete = null;
-  let parentTask = null;
-  let timeRemaining = null;
+  let task = "";
+  let description = "";
+  let priority = "";
+  let dueDate = "";
+  let timeToComplete = "";
+  let parentTask = "";
+  let timeRemaining = "";
   let child_tasks = [""];
 
   function clear_fields() {
-    task = null;
-    description = null;
-    priority = null;
-    dueDate = null;
-    timeToComplete = null;
-    parentTask = null;
-    timeRemaining = null;
+    task = "";
+    description = "";
+    priority = "";
+    dueDate = "";
+    timeToComplete = "";
+    parentTask = "";
+    timeRemaining = "";
     child_tasks = [""];
   }
 
   function addTask() {
     isAddTask = !(isAddTask);
+    console.log(typeof(tasks[0].timeToComplete));
   }
 
   function find_parent(task_list, taskid, new_task) {
@@ -252,7 +253,7 @@
                   {task.name} <SubtaskButton task={task} on:clicked={addSubTask} on:delete={deleteTask}/>
                 </div>
                 <div class="listitem">
-                  {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
+                  {task.description} Due: {task.dueDate} ETC: {task.timeToComplete} 
                 </div>
               </ListItem>
             {:else}
@@ -262,7 +263,7 @@
                         {task.name} <SubtaskButton task={task} on:clicked={addSubTask} on:delete={deleteTask}/>
                     </div>  
                     <div class="listitem">
-                      {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
+                      {task.description} | Due: {task.dueDate} | ETC: {task.timeToComplete} 
                     </div>  
                 </span>
                 {#each task.child_tasks as child}

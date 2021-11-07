@@ -60,7 +60,7 @@
                 {task.name} <SubtaskButton task={task} on:clicked={sendEvent} on:delete={deleteTask}/>
             </div>
             <div class="listitem">
-                {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
+                {task.description} | Due: {task.dueDate} | ETC: {task.timeToComplete} 
             </div>    
         </span>
         {#each children as child}
@@ -73,7 +73,7 @@
             {task.name} <SubtaskButton task={task} on:clicked={sendEvent} on:delete={deleteTask}/>
         </div>
         <div class="listitem">
-            {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
+            {task.description} | Due: {task.dueDate} | ETC: {task.timeToComplete} 
         </div>
     </ListItem>
 {/if}

@@ -5,7 +5,7 @@
   let task_id = $countid;
 
   class TaskObject {
-    constructor(name, description, priority, dueDate, timeToComplete, subtasks, parentTask) {
+    constructor(name, description, priority, dueDate, timeToComplete, subtasks, parentTask, timeRemaining) {
       this.id = task_id;
       this.name = name;
       this.description = description;
@@ -14,7 +14,7 @@
       this.timeToComplete = timeToComplete;
       this.subtasks = subtasks;
       this.parentTask = parentTask;
-
+      this.timeRemaining = timeRemaining;
     }
   }
 
@@ -30,6 +30,7 @@
   let timeToComplete = null;
   let subtasks = null;
   let parentTask = null;
+  let timeRemaining = null;
 
   function addTask() {
     task_id = task_id + 1;
@@ -39,7 +40,7 @@
   }
 
   function submittedTask() {
-    let newTask = new TaskObject(task, description, priority, dueDate, timeToComplete, subtasks, parentTask);
+    let newTask = new TaskObject(task, description, priority, dueDate, timeToComplete, subtasks, parentTask, timeRemaining);
     tasks.push(newTask);
     console.log(newTask);
     isAddTask = false;

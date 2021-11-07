@@ -3,7 +3,9 @@
     import { Router, Route, Link } from "svelte-navigator";
     export let theme;
 
-    
+    import { scale } from 'svelte/transition';
+    import { quintOut } from 'svelte/easing';
+    let show = false;
 </script>
 
 <div class="outside">
@@ -18,13 +20,19 @@
         </div>
         
         <div class="bottom" >
-            <MaterialApp theme={theme}>
-                <div class="app">
-                    <Link to="/login">
-                        <Button depressed rounded active size="x-large" class="black white-text"> ⟶ </Button>
-                    </Link>
-                </div>
-            </MaterialApp>
+            {#if show}
+                    <div transition:scale="{{duration: 10000, easing: quintOut}}">
+                        .
+                    </div>
+            {:else}
+                <MaterialApp theme={theme}>
+                    <div class="app">
+                        <Link to="/login">
+                            <Button depressed rounded active size="x-large" class="black white-text" bind:click={show}> ⟶ </Button>
+                        </Link>
+                    </div> 
+                </MaterialApp>
+            {/if}
         </div>
         
     </body>
@@ -75,6 +83,7 @@
 
 	.middle {
 		margin: auto;
+        border: none;
 	}
 
     .bottom {

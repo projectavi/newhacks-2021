@@ -32,7 +32,7 @@
 	// });
 </script>
 <div class="buttons">
-    <Button fab size="small" on:click={update}> + </Button> <Button fab size="small" on:click={update}> Edit </Button> <Button fab size="small" on:click={deleteTask}> Del </Button>
+    <Button fab size="small" on:click={update}> + </Button> <Button fab size="small" on:click={deleteTask}> Del </Button>
 </div>
 
 <!-- https://ibb.co/hf7fq8X

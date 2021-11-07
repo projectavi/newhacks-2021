@@ -10,6 +10,11 @@
   import User from "./User.svelte"
   import SubtaskButton from "./SubtaskButton.svelte"
   import TaskItem from "./TaskItem.svelte"
+  import { Router, Route, Link, navigate } from "svelte-navigator";
+
+  const etcRegExp = /^[0-2][0-9]\:[0-6][0-9]$/;
+  const dueDateRegExp = /^[0-9]{4}\/[0-1][0-9]\/[0-3][0-9]\/[0-2][0-9]\/[0-6][0-9]$/;
+  const priorityRegExp = /^[1-5]$/;
 
   export let uid = $userAcc.uid;
 
@@ -59,7 +64,7 @@
   }
 
   function addTask() {
-    isAddTask = true;
+    isAddTask = !(isAddTask);
   }
 
   function find_parent(task_list, taskid, new_task) {
@@ -107,6 +112,20 @@
   function submittedTask() {
     task_id = task_id + 1;
     console.log(task_id);
+
+    if (!etcRegExp.test(timeToComplete)) {
+      alert("Please enter a valid time to complete");
+      return;
+    }
+    if (!dueDateRegExp.test(dueDate)) {
+      alert("Please enter a valid due date");
+      return;
+    }
+    if (!priorityRegExp.test(priority)) {
+      alert("Please enter a valid priority");
+      return;
+    }
+
     let newTask = {id: task_id, name: task, description: description, priority: priority, dueDate: dueDate, timeToComplete: timeToComplete, parentTask: parentTask, timeRemaining: timeRemaining, child_tasks: child_tasks};
     if (FLAG_subtask) {
       for (var i = 0; i < tasks.length; i++) {
@@ -140,7 +159,6 @@
       firestore.collection('profiles').doc(id).delete();
       console.log(data);
       firestore.collection('profiles').add({ uid, data, saved: Date.now() });
-      alert("Your profile has been updated.")
   }
 
   function fillInfo(event) {
@@ -266,16 +284,17 @@
             <Col>
               <TextField dense rounded filled bind:value={task}>Task Name</TextField>
               <br />
-              <TextField dense rounded filled bind:value={priority}>Priority</TextField>
+              <TextField dense rounded filled bind:value={priority}>Priority [1-5]</TextField>
             </Col>
             <Col>
-              <TextField dense rounded filled bind:value={dueDate}>Due Date</TextField>
+              <TextField dense rounded filled bind:value={dueDate}>Due Date [YYYY/MM/DD/HH/MM]</TextField>
               <br />
-              <TextField dense rounded filled bind:value={timeToComplete}>Time to Complete</TextField>
+              <TextField dense rounded filled bind:value={timeToComplete}>Time to Complete [HH:MM]</TextField>
             </Col>
           </Row>
-          <Textarea noResize placeholder="Write in me, hoe." bind:value={description}>Description</Textarea>
+          <Textarea noResize placeholder="Description of Task." bind:value={description}>Description</Textarea>
           <Button depressed on:click={submittedTask}>Submit</Button>
+          <Button depressed on:click={addTask}>Cancel</Button>
         </div>
       </MaterialApp>
       {/if}
@@ -285,9 +304,9 @@
         <div class="text-center sexy">
           <ButtonGroup rounded activeClass="primary-color">
             <ButtonGroupItem on:click={addTask}>Add Task</ButtonGroupItem>
-            <ButtonGroupItem>Edit Task</ButtonGroupItem>
-            <ButtonGroupItem>Remove Task</ButtonGroupItem>
-            <ButtonGroupItem>Dialog It</ButtonGroupItem>
+            <Link to="/dialogit">
+              <ButtonGroupItem rounded>Dialog It</ButtonGroupItem>
+            </Link>
           </ButtonGroup>
         </div>
       </MaterialApp>

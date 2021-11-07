@@ -31,7 +31,6 @@
         const { id, new_data } = event.detail;
         firestore.collection('profiles').doc(id).delete();
         firestore.collection('profiles').add({ uid, data, saved: Date.now() });
-        alert("Your profile has been updated.")
     }
 
     function fillInfo(event) {
@@ -51,10 +50,16 @@
         $task_store = data.tasks_heirarchy;
     }
 
-    function test() {
-        console.log('test');
-        console.log($userAcc);
-        console.log(uid);
+    function checkAcc() {
+        if (FLAG_newUser) {
+            firestore.collection('profiles').add({ uid, data, saved: Date.now() });
+            alert("Your profile has been added.");
+        }
+    }
+
+    function addNewProfile() {
+        firestore.collection('profiles').add({ uid, data, saved: Date.now() })
+        alert("Your profile has been added.")
     }
 </script>
 
@@ -65,7 +70,7 @@
     <div id='top' style="height:100px;"></div>
     <div class="middle">
         <Link to="/dialogit">
-            <button>
+            <button on:click={checkAcc}>
                 <MaterialApp>
                     <div class="d-flex flex-row justify-center mt-4 mb-4 sexy">
                         <Card outlined raised style="width:300px;" class="grey darken-4">
@@ -83,7 +88,7 @@
     </div>
     <div class="middle">
         <Link to="/tasks">
-            <button>
+            <button on:click={checkAcc}>
                 <MaterialApp>
                     <div class="d-flex flex-row justify-center mt-4 mb-4 sexy">
                         <Card outlined raised style="width:300px;" class="grey darken-4">
@@ -101,7 +106,7 @@
     </div>
     <div class="middle">
         <Link to="/account">
-            <button on:click={test}>
+            <button on:click={checkAcc}>
                 <MaterialApp>
                     <div class="d-flex flex-row justify-center mt-4 mb-4 sexy">
                         <Card outlined raised style="width:300px;" class="grey darken-4">

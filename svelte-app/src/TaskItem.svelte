@@ -53,6 +53,9 @@
         <span slot="activator"> 
             <div class="listitem">
                 {task.name} <SubtaskButton task={task} on:clicked={sendEvent}/>
+            </div>
+            <div class="listitem">
+                {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
             </div>    
         </span>
         {#each children as child}
@@ -63,6 +66,9 @@
     <ListItem>
         <div class="listitem">
             {task.name} <SubtaskButton task={task} on:clicked={sendEvent}/>
+        </div>
+        <div class="listitem">
+            {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
         </div>
     </ListItem>
 {/if}

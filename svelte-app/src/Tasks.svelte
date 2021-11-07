@@ -192,13 +192,19 @@
                 <div class="listitem">
                   {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
                 </div>
+                <div class="listitem">
+                  {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion} 
+                </div>
               </ListItem>
             {:else}
               <ListGroup bind:active offset={26}>
                 <span slot="activator"> 
                     <div class="listitem">
                         {task.name} <SubtaskButton task={task} on:clicked={addSubTask}/>
-                    </div>    
+                    </div>  
+                    <div class="listitem">
+                      {task.description} Due: {task.due_date} ETC: {task.estimated_time_completion}
+                    </div>  
                 </span>
                 {#each task.child_tasks as child}
                   {#if typeof child != undefined}

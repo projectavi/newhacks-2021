@@ -3,6 +3,8 @@
     import { Router, Route, Link } from "svelte-navigator";
     export let theme;
 
+    import Typewriter from 'svelte-typewriter'
+
     import { scale } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
     let show = false;
@@ -43,9 +45,9 @@
         <div class="top">
         </div>
         <div class="middle">
-            <h1>
-                Dialog: Get Started
-            </h1>
+            <Typewriter interval={100} scrambleSlowdown=true >
+                <h1>Dialog: Get Started</h1>
+            </Typewriter>
         </div>
         
         <div class="bottom" >
@@ -63,7 +65,9 @@
                                 <Button depressed rounded active size="x-large" class="black white-text" bind:click={show}> (づ｡◕‿‿◕)づ  </Button>
                             </Link>
                         {:else}
+                            <p></p>
                             <Button depressed rounded active size="x-large" class="black white-text" on:click={signin}> Sign In with Google </Button> 
+                            <p></p>
                         {/if}
                     </div>
                 </MaterialApp>
